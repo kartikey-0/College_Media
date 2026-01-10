@@ -38,7 +38,6 @@ const ResumeBuilder = () => {
     const formData = new FormData();
     formData.append('file', file);
     
-    // TODO: Have to create /upload
     const response = await api.post('/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
