@@ -49,28 +49,28 @@ const AlumniResumeReview = lazy(() => import("../pages/AlumniResumeReview.jsx"))
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <PostSkeleton />;
   }
-  
+
   if (!user) {
     return <Navigate to="/landing" replace />;
   }
-  
+
   return children;
 };
 
 const AppRoutes = ({
-    activeTab,
-    setActiveTab,
-    searchQuery,
-    setSearchQuery,
+  activeTab,
+  setActiveTab,
+  searchQuery,
+  setSearchQuery,
 }) => {
-    const { user } = useAuth();
-    
-    return (
-        <Routes>
+  const { user } = useAuth();
+
+  return (
+    <Routes>
       {/* Public Routes */}
       <Route
         path="/landing"
@@ -92,7 +92,7 @@ const AppRoutes = ({
           )
         }
       />
-      
+
       <Route
         path="/signup"
         element={
@@ -181,7 +181,7 @@ const AppRoutes = ({
             </LazyWrapper>
           }
         />
-        
+
 
         <Route
           path="create-post"
@@ -380,9 +380,28 @@ const AppRoutes = ({
             </LazyWrapper>
           }
         />
+
+        <Route
+          path="*"
+          element={
+            <LazyWrapper>
+              <NotFound />
+            </LazyWrapper>
+          }
+        />
       </Route>
-    </Routes>
-    );
+
+      {/* 404 Fallback */}
+      <Route
+        path="*"
+        element={
+          <LazyWrapper>
+            <NotFound />
+          </LazyWrapper>
+        }
+      />
+    </Routes >
+  );
 };
 
 export default AppRoutes;
