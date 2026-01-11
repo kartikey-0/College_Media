@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { commentsApi } from "../api/endpoints";
 import { useTheme } from "../context/ThemeContext";
 import useFocusTrap from "../hooks/useFocusTrap";
+import useOptimisticUpdate from "../hooks/useOptimisticUpdate";
 
 const CommentModal = ({ isOpen, onClose, postId, commentCount }) => {
   const [comments, setComments] = useState([]);
@@ -9,6 +10,27 @@ const CommentModal = ({ isOpen, onClose, postId, commentCount }) => {
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
   const { modalRef } = useFocusTrap(isOpen, onClose);
+
+  // Optimistic update for comments
+  const { data: optimisticComments, optimisticUpdate: addOptimisticComment } = useOptimisticUpdate({
+    initialState: comments,
+    updateFn: async (newComments) => {
+      // The actual API call is handled in handlePostComment
+      return newComments;
+    },
+    optimisticUpdateFn: (currentComments) => {
+      // Add temporary comment with optimistic data
+      const tempComment = {
+        id: `temp-${Date.now()}`,
+        content: newComment,
+        user: { username: 'You' }, // Placeholder - should use actual user data
+        timestamp: 'Just now',
+        isOptimistic: true
+      };
+      return [...currentComments, tempComment];
+    },
+    errorMessage: 'Failed to post comment. Please try again.'
+  });
 
   // This effect runs every time the postId changes, 
   // ensuring comments stay synced with the visible reel.
@@ -23,7 +45,8 @@ const CommentModal = ({ isOpen, onClose, postId, commentCount }) => {
     setLoading(true);
     try {
       const response = await commentsApi.getByPost(postId);
-      setComments(response?.data?.data || []);
+      const fetchedComments = response?.data?.data || [];
+      setComments(fetchedComments);
     } catch (error) {
       console.error("Error fetching comments:", error);
       setComments([]);
@@ -35,15 +58,27 @@ const CommentModal = ({ isOpen, onClose, postId, commentCount }) => {
   const handlePostComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+
+    const commentText = newComment;
+    setNewComment(""); // Clear input immediately
+
     try {
-      const response = await commentsApi.create(postId, { content: newComment });
+      // Add optimistic comment
+      await addOptimisticComment();
+
+      // Make actual API call
+      const response = await commentsApi.create(postId, { content: commentText });
       if (response?.data) {
         const addedComment = response.data.data || response.data;
-        setComments((prev) => [...prev, addedComment]);
-        setNewComment("");
+        // Replace optimistic comment with real one
+        setComments((prev) => {
+          const filtered = prev.filter(c => !c.isOptimistic);
+          return [...filtered, addedComment];
+        });
       }
     } catch (error) {
       console.error("Error posting comment:", error);
+      setNewComment(commentText); // Restore comment text on error
     }
   };
 
@@ -51,10 +86,6 @@ const CommentModal = ({ isOpen, onClose, postId, commentCount }) => {
 
   return (
     <div
-      ref={modalRef}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
       className={`fixed top-0 right-0 z-[1000] h-full w-full lg:w-[450px] shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'
         } ${theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-white text-gray-900'}`}
     >
