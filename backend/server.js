@@ -11,6 +11,7 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const logger = require('./utils/logger');
 const { globalLimiter } = require('./middleware/rateLimitMiddleware');
 const { sanitizeAll, validateContentType, preventParameterPollution } = require('./middleware/sanitizationMiddleware');
+const { setupSwagger } = require('./config/swagger');
 require('./utils/redisClient'); // Initialize Redis client
 
 dotenv.config();
@@ -62,6 +63,9 @@ app.get('/', (req, res) => {
     message: 'College Media API is running!'
   });
 });
+
+// Setup Swagger API documentation
+setupSwagger(app);
 
 // Import and register routes
 app.use('/api/auth', require('./routes/auth'));
