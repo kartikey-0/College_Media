@@ -24,9 +24,9 @@ const os = require("os");
 
 /* ============================================================
    🔧 INTERNAL IMPORTS
-============================================================ */
 const helmet = require("helmet");
 const securityHeaders = require("./config/securityHeaders");
+
 
 const { initDB } = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
@@ -316,23 +316,7 @@ const startServer = async () => {
 
 /* ============================================================
    🧹 GRACEFUL SHUTDOWN
-============================================================ */
-const shutdown = async (signal) => {
-  logger.warn("Shutdown initiated", { signal });
-
-  server.close(async () => {
-    try {
-      if (dbConnection?.mongoose) {
-        await dbConnection.mongoose.connection.close(false);
-        logger.info("Database connection closed");
-      }
-    } catch (err) {
-      logger.error("Error during DB shutdown", {
-        error: err.message,
-      });
     }
-    process.exit(0);
-  });
 
   setTimeout(() => {
     logger.critical("Force shutdown");
@@ -345,22 +329,8 @@ process.on("SIGTERM", shutdown);
 
 /* ============================================================
    🧨 PROCESS SAFETY
-============================================================ */
-process.on("unhandledRejection", (reason) => {
-  logger.critical("Unhandled Promise Rejection", {
-    reason,
   });
-});
-
-process.on("uncaughtException", (err) => {
-  logger.critical("Uncaught Exception", {
-    message: err.message,
-    stack: err.stack,
-  });
-  process.exit(1);
-});
+}
 
 /* ============================================================
    ▶️ BOOTSTRAP
-============================================================ */
-startServer();
