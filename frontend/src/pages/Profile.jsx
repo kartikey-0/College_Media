@@ -7,7 +7,6 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('posts');
   const { user: contextUser } = useAuth();
   const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchProfile();
@@ -22,17 +21,13 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      setLoading(true);
       const response = await accountApi.getProfile();
       if (response.success) {
         setProfileData(response.data);
       }
     } catch (error) {
-      console.error('Failed to fetch profile:', error);
       // Fallback to context user
       setProfileData(contextUser);
-    } finally {
-      setLoading(false);
     }
   };
   
