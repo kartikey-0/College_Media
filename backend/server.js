@@ -21,6 +21,7 @@ const resumeRoutes = require("./routes/resume");
 const uploadRoutes = require("./routes/upload");
 const { globalLimiter, authLimiter } = require("./middleware/rateLimiter");
 const { slidingWindowLimiter } = require("./middleware/slidingWindowLimiter");
+const logger = require("./utils/logger"); // 🔥 ADDED
 
 /* ------------------
    🌱 ENV SETUP
@@ -74,6 +75,11 @@ app.use((req, res, next) => {
 ------------------ */
 app.use((req, res, next) => {
   res.setTimeout(30 * 1000, () => {
+    logger.warn("Request timeout", {
+      method: req.method,
+      url: req.originalUrl,
+    });
+
     res.status(408).json({
       success: false,
       message: "Request timeout",
@@ -89,17 +95,21 @@ app.use("/api", slidingWindowLimiter);
 app.use("/api", globalLimiter);
 
 /* ------------------
-   📊 REQUEST LOGGING (LIGHT)
+   📊 REQUEST LOGGING
 ------------------ */
 app.use((req, res, next) => {
   const start = Date.now();
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+
     if (duration > 1000) {
-      console.warn(
-        `⚠️ Slow Request: ${req.method} ${req.originalUrl} - ${duration}ms`
-      );
+      logger.warn("Slow request detected", {
+        method: req.method,
+        url: req.originalUrl,
+        duration,
+        statusCode: res.statusCode,
+      });
     }
   });
 
@@ -145,9 +155,11 @@ let dbConnection = null;
 const startServer = async () => {
   try {
     dbConnection = await initDB();
-    console.log("✅ Database initialized");
+    logger.info("Database initialized successfully");
   } catch (err) {
-    console.error("❌ DB init failed:", err.message);
+    logger.critical("Database initialization failed", {
+      error: err.message,
+    });
     dbConnection = null;
   }
 
@@ -168,7 +180,7 @@ const startServer = async () => {
   app.use(errorHandler);
 
   server.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    logger.info(`Server running on port ${PORT}`);
   });
 };
 
@@ -176,26 +188,27 @@ const startServer = async () => {
    🧹 GRACEFUL SHUTDOWN
 ------------------ */
 const shutdown = async (signal) => {
-  console.log(`\n⚠️ ${signal} received. Starting cleanup...`);
+  logger.warn("Shutdown signal received", { signal });
 
   server.close(async () => {
-    console.log("🛑 HTTP server closed");
+    logger.info("HTTP server closed");
 
     try {
       if (dbConnection?.mongoose) {
         await dbConnection.mongoose.connection.close(false);
-        console.log("🧹 MongoDB connection closed");
+        logger.info("MongoDB connection closed");
       }
     } catch (err) {
-      console.error("❌ Error closing DB:", err.message);
+      logger.error("Error closing DB connection", {
+        error: err.message,
+      });
     }
 
     process.exit(0);
   });
 
-  // Force exit if cleanup hangs
   setTimeout(() => {
-    console.error("⏰ Force shutdown due to timeout");
+    logger.critical("Force shutdown due to timeout");
     process.exit(1);
   }, 10 * 1000);
 };
@@ -204,14 +217,19 @@ process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 
 /* ------------------
-   🧨 PROCESS SAFETY
+   🧨 PROCESS SAFETY (NO SILENT FAIL)
 ------------------ */
 process.on("unhandledRejection", (reason) => {
-  console.error("🔥 Unhandled Rejection:", reason);
+  logger.critical("Unhandled Promise Rejection", {
+    reason,
+  });
 });
 
 process.on("uncaughtException", (err) => {
-  console.error("💥 Uncaught Exception:", err);
+  logger.critical("Uncaught Exception", {
+    message: err.message,
+    stack: err.stack,
+  });
   process.exit(1);
 });
 
