@@ -1,12 +1,24 @@
 /**
+ * =========================================
  * Centralized Error Handling Middleware
- * Handles 404 and application errors consistently
+ * - No silent failures
+ * - Structured logging
+ * - Consistent API responses
+ * =========================================
  */
 
-const logger = require('../utils/logger');
+const logger = require("../utils/logger");
 
-// 404 Not Found Handler
+/* ------------------
+   ❌ 404 - Route Not Found
+------------------ */
 const notFound = (req, res, next) => {
+  logger.warn("Route Not Found", {
+    method: req.method,
+    url: req.originalUrl,
+    ip: req.ip,
+  });
+
   res.status(404).json({
     success: false,
     error: {
@@ -16,21 +28,18 @@ const notFound = (req, res, next) => {
   });
 };
 
-// ❌ Global Error Handler
+/* ------------------
+   ❌ GLOBAL ERROR HANDLER
+------------------ */
 const errorHandler = (err, req, res, next) => {
-  // Log error with more details
-  console.error("❌ Error occurred:");
-  console.error("  Path:", req.method, req.originalUrl);
-  console.error("  Message:", err.message);
-  console.error("  Stack:", err.stack);
-
-  // Default status code
   const statusCode = err.statusCode || res.statusCode || 500;
 
   let message = err.message || "Internal Server Error";
   let errorCode = err.code || "INTERNAL_SERVER_ERROR";
 
-  // 🟡 Mongoose Validation Error
+  /* ------------------
+     🟡 MONGOOSE ERRORS
+  ------------------ */
   if (err.name === "ValidationError") {
     message = Object.values(err.errors)
       .map((e) => e.message)
@@ -38,13 +47,14 @@ const errorHandler = (err, req, res, next) => {
     errorCode = "VALIDATION_ERROR";
   }
 
-  // 🟡 Mongoose Cast Error (Invalid ObjectId)
   if (err.name === "CastError") {
     message = "Invalid resource ID format";
     errorCode = "INVALID_ID";
   }
 
-  // 🟡 JWT Errors
+  /* ------------------
+     🟡 JWT ERRORS
+  ------------------ */
   if (err.name === "JsonWebTokenError") {
     message = "Invalid authentication token";
     errorCode = "INVALID_TOKEN";
@@ -55,18 +65,33 @@ const errorHandler = (err, req, res, next) => {
     errorCode = "TOKEN_EXPIRED";
   }
 
-  // 🟡 Multer Errors
+  /* ------------------
+     🟡 MULTER ERRORS
+  ------------------ */
   if (err.name === "MulterError") {
     errorCode = "FILE_UPLOAD_ERROR";
-
-    if (err.code === "LIMIT_FILE_SIZE") {
-      message = "File size exceeds 5MB limit";
-    } else {
-      message = err.message;
-    }
+    message =
+      err.code === "LIMIT_FILE_SIZE"
+        ? "File size exceeds 5MB limit"
+        : err.message;
   }
 
-  // ❌ Final standardized error response
+  /* ------------------
+     🔥 LOG EVERY ERROR (NO SILENT FAIL)
+  ------------------ */
+  logger.error("Application Error", {
+    method: req.method,
+    url: req.originalUrl,
+    statusCode,
+    errorCode,
+    message,
+    stack: err.stack,
+    user: req.user ? req.user.id : "anonymous",
+  });
+
+  /* ------------------
+     ❌ STANDARD RESPONSE
+  ------------------ */
   res.status(statusCode).json({
     success: false,
     error: {
