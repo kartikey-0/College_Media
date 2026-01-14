@@ -5,6 +5,7 @@ const logger = require('../utils/logger');
 const cleanupSessions = require('./tasks/cleanupSessions');
 const sendDigestEmail = require('./tasks/sendDigestEmail');
 const archiveOldData = require('./tasks/archiveOldData');
+const aggregateMetrics = require('./tasks/aggregateMetrics');
 
 /**
  * Task Registry - Centralized management of all scheduled tasks
@@ -168,5 +169,6 @@ const scheduler = new Scheduler();
 scheduler.register(cleanupSessions);
 scheduler.register(sendDigestEmail);
 scheduler.register(archiveOldData);
+scheduler.register(aggregateMetrics);
 
 module.exports = scheduler;
