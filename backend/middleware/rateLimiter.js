@@ -4,8 +4,8 @@
 ===================================================== */
 const RATE_LIMIT_CONFIG = Object.freeze({
   GLOBAL: {
-    WINDOW_MS: 15 * 60 * 1000,
-    MAX: 200,
+    WINDOW_MS: 60 * 1000,
+    MAX: 100,
   },
   AUTH: {
     WINDOW_MS: 10 * 60 * 1000,
