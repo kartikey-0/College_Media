@@ -185,12 +185,15 @@ const App = () => {
   // ============= RENDER =============
 
   return (
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f2c7104a5d97a14576389aa5f41db426cca6a2f4
     <SearchProvider>
       <NotificationProvider>
         <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-orange-50">
           {/* ========== NAVIGATION BAR ========== */}
           <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 <div className="flex-shrink-0">
                   <div className="w-24 h-8 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-400 rounded-lg flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity duration-300">
@@ -288,10 +291,19 @@ const App = () => {
               animation: bounce 0.5s ease-in-out;
             }
           `}</style>
+<<<<<<< HEAD
+=======
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-orange-50">
+      {/* ========== NAVIGATION BAR ========== */}
+      <NavigationBar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+=======
         </div>
       </NotificationProvider>
     </SearchProvider>
   );
 };
 
+>>>>>>> f2c7104a5d97a14576389aa5f41db426cca6a2f4
 export default App;
