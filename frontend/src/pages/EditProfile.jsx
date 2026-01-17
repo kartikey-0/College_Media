@@ -107,8 +107,9 @@ const EditProfile = () => {
         // Fallback to direct API call
         const formDataToSend = new FormData();
         formDataToSend.append('profilePicture', imageFile);
+        const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
 
-        const response = await fetch('http://localhost:5000/api/users/profile-picture', {
+        const response = await fetch(`${API_BASE}/api/users/profile-picture`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -142,7 +143,8 @@ const EditProfile = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/profile-picture', {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
+      const response = await fetch(`${API_BASE}/api/users/profile-picture`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token || localStorage.getItem('token')}`
@@ -198,9 +200,10 @@ const EditProfile = () => {
       } else {
         // Fallback to direct API calls
         const authToken = token || localStorage.getItem('token');
+        const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
         
         // Update basic profile info
-        const profileResponse = await fetch('http://localhost:5000/api/users/profile', {
+        const profileResponse = await fetch(`${API_BASE}/api/users/profile`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -219,7 +222,7 @@ const EditProfile = () => {
           throw new Error(profileData.message || 'Failed to update profile');
         }
 
-        // Update settings
+        // Update settings`${API_BASE}/api/users/profile/settings`
         const settingsResponse = await fetch('http://localhost:5000/api/users/profile/settings', {
           method: 'PUT',
           headers: {

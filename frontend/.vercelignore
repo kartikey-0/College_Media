@@ -1,0 +1,10 @@
+# Vercel build ignore file
+/node_modules
+/.git
+/.env.local
+/.env.*.local
+/dist
+/build
+/coverage
+*.test.js
+*.spec.js

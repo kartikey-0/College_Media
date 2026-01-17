@@ -124,8 +124,9 @@ class ProctorAI {
         try {
             // Take snapshot
             const snapshot = this.captureSnapshot();
+            const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
 
-            const response = await axios.post('http://localhost:5000/api/proctoring/violation', {
+            const response = await axios.post(`${API_BASE}/api/proctoring/violation`, {
                 sessionId: this.sessionId,
                 type,
                 details,

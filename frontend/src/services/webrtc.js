@@ -27,7 +27,8 @@ class WebRTCService {
      */
     connect(token, userId) {
         this.userId = userId;
-        this.socket = io('http://localhost:5000/webrtc', {
+        const SOCKET_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
+        this.socket = io(`${SOCKET_BASE}/webrtc`, {
             auth: { token },
             transports: ['websocket']
         });

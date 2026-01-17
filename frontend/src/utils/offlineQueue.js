@@ -97,12 +97,13 @@ class OfflineQueue {
             headers.Authorization = `Bearer ${token}`;
         }
 
+        const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
         return axios({
             url: request.url,
             method: request.method,
             data: request.data,
             headers: headers,
-            baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api', // Mirroring client.js
+            baseURL: `${API_BASE}/api`,
         });
     }
 

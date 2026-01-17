@@ -1,7 +1,4 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useSocket } from './SocketContext';
-import { notificationsApi } from '../api/endpoints';
-import { playNotificationSound } from '../utils/notificationSound';
 import { toast } from 'react-hot-toast';
 
 const NotificationContext = createContext();

@@ -126,10 +126,10 @@ const Settings = () => {
     setPasswordLoading(true);
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
+      const response = await fetch(`${API_BASE}/api/auth/change-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,10 +169,10 @@ const Settings = () => {
     setTwoFAError("");
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/api$/, '') || 'http://localhost:5000';
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/2fa/enable`, {
+      const response = await fetch(`${API_BASE}/api/auth/2fa/enable`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

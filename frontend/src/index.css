@@ -73,7 +73,9 @@
   }
 
   body {
-    @apply bg-bg-primary text-text-primary transition-colors duration-300;
+    background-color: rgb(var(--bg-primary));
+    color: rgb(var(--text-primary));
+    @apply transition-colors duration-300;
     margin: 0 !important;
     padding: 0 !important;
     overflow-x: hidden;
@@ -129,7 +131,6 @@
 }
 
 @keyframes bounce {
-
   0%,
   100% {
     transform: scale(1);

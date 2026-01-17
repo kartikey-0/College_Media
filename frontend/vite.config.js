@@ -41,12 +41,12 @@ export default defineConfig(({ command }) => {
       host: true,
       port: 5173,
       strictPort: false,
-      hmr: {
+      hmr: process.env.NODE_ENV === 'development' ? {
         protocol: "ws",
         host: "localhost",
         port: 5173,
         clientPort: 5173,
-      },
+      } : undefined,
     },
 
     // 🔹 BUILD-ONLY settings

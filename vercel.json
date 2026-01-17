@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist",
+  "env": {
+    "VITE_ENABLE_MOCK_DATA": "true",
+    "VITE_ENV": "production",
+    "VITE_API_BASE_URL": "https://college-media.vercel.app/api"
+  }
+}
