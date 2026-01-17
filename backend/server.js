@@ -22,6 +22,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const http = require("http");
+const https = require("https");
+const fs = require("fs");
 const os = require("os");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
@@ -67,6 +69,8 @@ const ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 5000;
 const TRUST_PROXY = process.env.TRUST_PROXY === "true";
 const METRICS_TOKEN = process.env.METRICS_TOKEN || "metrics-secret";
+const SSL_KEY_PATH = process.env.SSL_KEY_PATH;
+const SSL_CERT_PATH = process.env.SSL_CERT_PATH;
 
 /* ============================================================
    🛡️ CSRF CONFIG
@@ -79,7 +83,20 @@ const CSRF_METHODS = ["POST", "PUT", "PATCH", "DELETE"];
    🚀 APP INIT
 ============================================================ */
 const app = express();
-const server = http.createServer(app);
+
+// Create HTTP or HTTPS server based on SSL configuration
+let server;
+if (SSL_KEY_PATH && SSL_CERT_PATH && fs.existsSync(SSL_KEY_PATH) && fs.existsSync(SSL_CERT_PATH)) {
+  const sslOptions = {
+    key: fs.readFileSync(SSL_KEY_PATH),
+    cert: fs.readFileSync(SSL_CERT_PATH),
+  };
+  server = https.createServer(sslOptions, app);
+  logger.info("HTTPS server configured", { keyPath: SSL_KEY_PATH, certPath: SSL_CERT_PATH });
+} else {
+  server = http.createServer(app);
+  logger.info("HTTP server configured (SSL certificates not found or not configured)");
+}
 
 // Socket.io Setup
 const io = new SocketIOServer(server, {

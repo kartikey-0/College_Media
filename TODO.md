@@ -1,10 +1,12 @@
-# PWA Implementation TODO
+# SSL/HTTPS Configuration Fixes
 
-- [x] Install vite-plugin-pwa dependency
-- [x] Update vite.config.js with PWA plugin configuration
-- [x] Create public/manifest.json with app metadata
-- [x] Update index.html with PWA meta tags and manifest link
-- [x] Create app icons in public/icons/ (192x192 icon exists, 512x512 icon missing - needs to be added manually)
-- [x] Run npm install to install dependencies
-- [x] Build the app to generate service worker (service worker files generated: sw.js, workbox-*.js)
-- [ ] Test offline functionality and app installation (manual testing required)
+## Tasks
+- [x] Modify backend/server.js to support HTTPS server creation when SSL certs are provided
+- [x] Update frontend/nginx.conf to support HTTPS on port 443
+- [x] Add TLS configuration to k8s/ingress.yaml
+- [x] Add HTTP to HTTPS redirects in netlify.toml
+- [ ] Add HTTP to HTTPS redirects in frontend/vercel.json
+- [x] Generate SSL certificates for local development (optional)
+
+## Status
+Completed
