@@ -23,52 +23,157 @@ A full-stack social media platform built for college students to connect, share 
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- MongoDB (local or cloud instance like MongoDB Atlas)
-- npm or yarn
+Before you begin, ensure you have the following installed:
 
-### Backend Setup
+- **Node.js** (v18 or higher) - [Download from nodejs.org](https://nodejs.org/)
+- **MongoDB** - Choose one of the following options:
+  - **MongoDB Atlas** (Cloud): Free tier available at [mongodb.com/atlas](https://www.mongodb.com/atlas)
+  - **Local MongoDB**: Install from [mongodb.com/try/download/community](https://www.mongodb.com/try/download/community)
+- **Git** - [Download from git-scm.com](https://git-scm.com/)
+- **npm** or **yarn** (comes with Node.js)
+
+### Quick Setup (Recommended)
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Ewocs/College_Media.git
+   cd College_Media
+   ```
+
+2. **Environment Setup:**
+   ```bash
+   # Copy environment template
+   cp backend/.env.example backend/.env
+   ```
+
+3. **Edit the `.env` file** in the `backend` directory:
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/college-media
+   # OR for MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/college-media
+   JWT_SECRET=your_super_secret_jwt_key_here
+   PORT=5000
+   NODE_ENV=development
+   ```
+
+4. **Install dependencies and start services:**
+   ```bash
+   # Backend
+   cd backend
+   npm install
+   npm run dev
+
+   # Frontend (in a new terminal)
+   cd ../frontend
+   npm install
+   npm run dev
+   ```
+
+5. **Access the application:**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:5000
+
+### Manual Setup
+
+#### Backend Setup
 
 1. Navigate to the backend directory:
-   ```
+   ```bash
    cd backend
    ```
 
 2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
 
 3. Create a `.env` file in the backend directory with the following variables:
-   ```
+   ```env
    MONGODB_URI=mongodb://localhost:27017/college-media
    JWT_SECRET=your_jwt_secret_here
    PORT=5000
+   NODE_ENV=development
    ```
 
 4. Start the backend server:
-   ```
+   ```bash
    npm run dev
    ```
    The server will run on `http://localhost:5000`.
 
-### Frontend Setup
+#### Frontend Setup
 
 1. Navigate to the frontend directory:
-   ```
+   ```bash
    cd frontend
    ```
 
 2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
 
 3. Start the development server:
-   ```
+   ```bash
    npm run dev
    ```
    The app will run on `http://localhost:5173` (default Vite port).
+
+### Environment Setup Verification
+
+After setup, verify everything is working:
+
+1. **Check Node.js version:**
+   ```bash
+   node --version
+   # Should show v18.x.x or higher
+   ```
+
+2. **Check MongoDB connection:**
+   ```bash
+   # If using local MongoDB, ensure it's running
+   # You can test with MongoDB Compass or mongosh
+   ```
+
+3. **Test API endpoints:**
+   ```bash
+   curl http://localhost:5000
+   # Should return: {"message": "College Media Backend Running"}
+   ```
+
+### Troubleshooting
+
+#### Common Issues
+
+**"MongoServerError: Authentication failed"**
+- Check your MongoDB URI in `.env`
+- For MongoDB Atlas, ensure IP whitelist includes your IP
+- Verify username and password are correct
+
+**"Port already in use"**
+```bash
+# Find process using port 5000
+lsof -i :5000
+# Kill the process or change PORT in .env
+```
+
+**"Module not found" errors**
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**"CORS errors" in browser**
+- Ensure both frontend and backend are running
+- Check that backend allows requests from frontend origin
+
+#### Alternative Setup Methods
+
+**Using Docker (Coming Soon)**
+Docker setup instructions will be added in a future update.
+
+**Using yarn instead of npm**
+Replace `npm install` with `yarn install` and `npm run dev` with `yarn dev`.
 
 ## Usage
 
