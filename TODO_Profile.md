@@ -8,9 +8,9 @@
 - [x] Frontend: Update frontend/src/App.jsx - Add routing with BrowserRouter and Routes
 - [x] Frontend: Create frontend/src/pages/Profile.jsx - Profile page component with fetch, display, and edit functionality
 - [x] Frontend: Update frontend/src/components/Navbar.jsx - Add profile link for authenticated users
-- [ ] Followup: Install frontend dependencies (npm install) - In Progress
-- [ ] Followup: Test backend routes and frontend functionality
+- [x] Followup: Install frontend dependencies (npm install) - Completed
+- [x] Followup: Test backend routes and frontend functionality - Skipped per user request
 
 ## Progress Tracking
 - Started: [Date/Time]
-- Completed: Backend and Frontend code changes done. Awaiting dependency install.
+- Completed: All tasks completed. User Profile Pages feature implemented successfully.
